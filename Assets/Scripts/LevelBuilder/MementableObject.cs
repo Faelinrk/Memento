@@ -1,21 +1,16 @@
 using Memento;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
-using static UnityEditor.ObjectChangeEventStream;
 
-public class MementableObject : MonoBehaviour
+public class MementableObject
 {
-    private PositionOriginator _originator;
-    private PositionCaretaker _caretaker;
-    private void Awake()
+    public PositionOriginator Originator;
+    public PositionCaretaker Caretaker;
+    public MementableObject(GameObject gameObject)
     {
-        _originator = new PositionOriginator(gameObject.transform);
-        _caretaker = new PositionCaretaker(_originator, "Hexagon");
+        Originator = new PositionOriginator(gameObject.transform);
+        Caretaker = new PositionCaretaker(Originator, "Hexagon");
     }
-    private void Update()
+    public void InputManager()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
@@ -28,14 +23,14 @@ public class MementableObject : MonoBehaviour
     }
     public void Undo(bool remember = true)
     {
-        _caretaker.Undo(remember);
+        Caretaker.Undo(remember);
     }
     public void Backup()
     {
-        _caretaker.Backup();
+        Caretaker.Backup();
     }
     public PositionCaretakerData LoadData()
     {
-        return _caretaker.LoadData();
+        return Caretaker.LoadData();
     }
 }

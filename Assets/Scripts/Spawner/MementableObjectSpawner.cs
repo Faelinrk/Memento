@@ -5,8 +5,6 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public sealed class MementableObjectSpawner
 {
-    private AsyncOperationHandle<MementableObject> _currentUnitHandle;
-    private MementableObject _unitInstance;
 
     public async UniTask<MementableObject> InstantiateMementoObjectAsync(string key)
     {
@@ -16,6 +14,7 @@ public sealed class MementableObjectSpawner
         {
             var op = Addressables.InstantiateAsync(key);
         }
-        return loadOp.Result.GetComponent<MementableObject>();
+        var objectView = loadOp.Result.GetComponent<ObjectView>();
+        return objectView.MementableObj;
     }
 }

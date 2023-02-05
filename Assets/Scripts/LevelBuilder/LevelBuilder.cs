@@ -10,7 +10,7 @@ public class LevelBuilder
     private MementoSerialize<PositionCaretakerData> _serializer;
     private MementableObjectSpawner _spawner = new MementableObjectSpawner();
     private List<string> _objectNames;
-    private List<MementableObject> _objects = new List<MementableObject>();
+    public List<MementableObject> _objects = new List<MementableObject>();
     private List<PositionCaretakerData> _positionCaretakerData = new List<PositionCaretakerData>();
     private string _path;
     public string Path { get => _path; set => _path = value; }
@@ -21,7 +21,7 @@ public class LevelBuilder
         _objectNames = new List<string>();
     }
 
-    public async UniTask BuildLevel()
+    public async UniTask BuildLevelAsync()
     {
         LoadSerializer();
         var data = _serializer.DeserializeMemento();
@@ -33,17 +33,25 @@ public class LevelBuilder
         {
             MementableObject obj = await _spawner.InstantiateMementoObjectAsync(_objectNames[i]);
             await UniTask.DelayFrame(100);
-            obj.transform.position = data[i].positions.Last();
+            for(int j = 0; j < data[i].positions.Count; j++)
+            {
+                obj.Caretaker.Mementos.Add(new PositionMemento(data[i].positions[j]));
+            }
+            obj.Undo(false);
         }
     }
+    public void BuildLevel()
+    {
+        BuildLevelAsync();
+     }
 
     public void SaveScene()
     {
-        var objs = GameObject.FindObjectsOfType<MementableObject>();
+        var objs = GameObject.FindObjectsOfType<ObjectView>();
         _objects = new List<MementableObject>();
         for (int i = 0; i < objs.Length; i++)
         {
-            _objects.Add(objs[i]);
+            _objects.Add(objs[i].MementableObj);
         }
         LoadSerializer();
         _serializer.SerializeMemento();

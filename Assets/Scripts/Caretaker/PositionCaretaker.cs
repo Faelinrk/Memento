@@ -10,7 +10,7 @@ namespace Memento
     public class PositionCaretaker : ICaretaker
     {
         PositionCaretakerData _caretakerData = new PositionCaretakerData();
-        private List<IMemento<Vector3Serializable>> _mementos = new List<IMemento<Vector3Serializable>>();
+        public List<IMemento<Vector3Serializable>> Mementos { get; set; } = new List<IMemento<Vector3Serializable>>();
 
         private PositionOriginator _originator;
 
@@ -23,19 +23,19 @@ namespace Memento
 
         public void Backup() // Creating mementos and feeding them to list
         { 
-            this._mementos.Add(this._originator.Save());
+            this.Mementos.Add(this._originator.Save());
             Debug.Log("Backup...");
         }
 
         public void Undo(bool remember = true)
         {
-            if (this._mementos.Count == 0)
+            if (this.Mementos.Count == 0)
             {
                 return;
             }
 
-            var memento = this._mementos.Last();
-            this._mementos.Remove(memento); // Removing last memento from list
+            var memento = this.Mementos.Last();
+            this.Mementos.Remove(memento); // Removing last memento from list
 
             try
             {
@@ -52,7 +52,7 @@ namespace Memento
 
         public void ShowHistory()
         {
-            foreach (var memento in this._mementos)
+            foreach (var memento in this.Mementos)
             {
                 Debug.Log(memento.GetName());
             }
@@ -60,9 +60,9 @@ namespace Memento
 
         public PositionCaretakerData LoadData()
         {
-            for(int i = 0; i < _mementos.Count; i++)
+            for(int i = 0; i < Mementos.Count; i++)
             {
-                _caretakerData.positions.Add(_mementos[i].GetState());
+                _caretakerData.positions.Add(Mementos[i].GetState());
             }
             return _caretakerData;
         }
